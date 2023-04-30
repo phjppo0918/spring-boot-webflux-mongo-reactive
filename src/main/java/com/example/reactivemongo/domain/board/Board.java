@@ -1,4 +1,4 @@
-package com.example.reactivemongo.domain.member;
+package com.example.reactivemongo.domain.board;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -10,10 +10,11 @@ import org.springframework.data.annotation.Id;
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
-public class Member {
+public class Board {
     @Id
     @NonFinal
     String id;
-    String name;
-    String password;
+    String title;
+    String content;
+    String writerId;
 }

@@ -16,7 +16,7 @@ public class MemberService {
     MemberRepository memberRepository;
     MemberMapper memberMapper;
 
-    public Mono<MemberResponse> create(MemberRequest dto) {
+    public Mono<MemberResponse> create(final MemberRequest dto) {
         return memberRepository.insert(memberMapper.toEntity(dto))
                 .map(memberMapper::toResponse);
     }
@@ -25,7 +25,11 @@ public class MemberService {
         return memberRepository.findAll().map(memberMapper::toResponse);
     }
 
-    public Mono<MemberResponse> findById(String id) {
+    public Mono<MemberResponse> findById(final String id) {
         return memberRepository.findById(id).map(memberMapper::toResponse);
+    }
+
+    public Mono<Member> getEntity(final String id) {
+        return memberRepository.findById(id);
     }
 }
