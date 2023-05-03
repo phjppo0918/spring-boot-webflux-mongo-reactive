@@ -34,6 +34,15 @@ dependencies {
     //test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'io.projectreactor:reactor-test'
+    testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo'
+
+    //lombok-test
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.mapstruct:mapstruct-processor:1.5.1.Final'
+    testAnnotationProcessor "org.projectlombok:lombok-mapstruct-binding:0.2.0"
+
+
 }
 
 tasks.named('test') {
