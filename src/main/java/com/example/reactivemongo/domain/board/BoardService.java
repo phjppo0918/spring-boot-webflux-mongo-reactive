@@ -21,8 +21,8 @@ public class BoardService {
     AuthService authService;
 
     public Mono<BoardResponse> create(final BoardRequest dto) {
-        return authService.getLoginUser()
-                .map(user -> boardMapper.toEntity(dto, user))
+        return Mono.zip(Mono.just(dto), authService.getLoginUser())
+                .map(t -> boardMapper.toEntity(t.getT1(), t.getT2()))
                 .flatMap(boardRepository::insert)
                 .map(boardMapper::toResponse);
     }
