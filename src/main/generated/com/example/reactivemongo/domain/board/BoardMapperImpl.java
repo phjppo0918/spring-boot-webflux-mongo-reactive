@@ -10,15 +10,15 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-04-30T16:55:17+0900",
+    date = "2023-05-03T16:51:15+0900",
     comments = "version: 1.5.1.Final, compiler: javac, environment: Java 17.0.5 (Homebrew)"
 )
 @Component
 public class BoardMapperImpl implements BoardMapper {
 
     @Override
-    public Board toEntity(BoardRequest dto, String writerId) {
-        if ( dto == null && writerId == null ) {
+    public Board toEntity(BoardRequest dto, Member writer) {
+        if ( dto == null && writer == null ) {
             return null;
         }
 
@@ -28,28 +28,26 @@ public class BoardMapperImpl implements BoardMapper {
             title = dto.getTitle();
             content = dto.getContent();
         }
-        String writerId1 = null;
-        writerId1 = writerId;
+        Member writer1 = null;
+        writer1 = writer;
 
-        Board board = new Board( title, content, writerId1 );
+        Board board = new Board( title, content, writer1 );
 
         return board;
     }
 
     @Override
-    public BoardResponse toResponse(Board entity, Member writer) {
-        if ( entity == null && writer == null ) {
+    public BoardResponse toResponse(Board entity) {
+        if ( entity == null ) {
             return null;
         }
 
         BoardResponse.BoardResponseBuilder boardResponse = BoardResponse.builder();
 
-        if ( entity != null ) {
-            boardResponse.id( entity.getId() );
-            boardResponse.title( entity.getTitle() );
-            boardResponse.content( entity.getContent() );
-        }
-        boardResponse.writer( memberToMemberResponse( writer ) );
+        boardResponse.id( entity.getId() );
+        boardResponse.title( entity.getTitle() );
+        boardResponse.content( entity.getContent() );
+        boardResponse.writer( memberToMemberResponse( entity.getWriter() ) );
 
         return boardResponse.build();
     }
@@ -62,9 +60,9 @@ public class BoardMapperImpl implements BoardMapper {
 
         BoardSummary.BoardSummaryBuilder boardSummary = BoardSummary.builder();
 
+        boardSummary.writerId( entityWriterId( entity ) );
         boardSummary.id( entity.getId() );
         boardSummary.title( entity.getTitle() );
-        boardSummary.writerId( entity.getWriterId() );
 
         return boardSummary.build();
     }
@@ -80,5 +78,20 @@ public class BoardMapperImpl implements BoardMapper {
         memberResponse.name( member.getName() );
 
         return memberResponse.build();
+    }
+
+    private String entityWriterId(Board board) {
+        if ( board == null ) {
+            return null;
+        }
+        Member writer = board.getWriter();
+        if ( writer == null ) {
+            return null;
+        }
+        String id = writer.getId();
+        if ( id == null ) {
+            return null;
+        }
+        return id;
     }
 }

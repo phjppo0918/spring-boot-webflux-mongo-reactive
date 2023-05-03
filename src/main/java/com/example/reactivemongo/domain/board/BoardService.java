@@ -4,7 +4,6 @@ import com.example.reactivemongo.domain.auth.AuthService;
 import com.example.reactivemongo.domain.board.dto.BoardRequest;
 import com.example.reactivemongo.domain.board.dto.BoardResponse;
 import com.example.reactivemongo.domain.board.dto.BoardSummary;
-import com.example.reactivemongo.domain.member.MemberService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -20,14 +19,14 @@ public class BoardService {
     BoardRepository boardRepository;
     BoardMapper boardMapper;
     AuthService authService;
-    MemberService memberService;
 
     public Mono<BoardResponse> create(final BoardRequest dto) {
-        return authService.getLoginUserId()
+
+
+        return authService.getLoginUser()
                 .map(user -> boardMapper.toEntity(dto, user))
                 .flatMap(boardRepository::insert)
-                .zipWith(authService.getLoginUser())
-                .map(t -> boardMapper.toResponse(t.getT1(), t.getT2()));
+                .map(boardMapper::toResponse);
     }
 
     public Flux<BoardSummary> findAll() {
@@ -42,10 +41,6 @@ public class BoardService {
 
     public Mono<BoardResponse> findById(final String id) {
         return boardRepository.findById(id)
-                .zipWith(boardRepository
-                        .findById(id)
-                        .map(Board::getWriterId)
-                        .flatMap(memberService::getEntity))
-                .map(t -> boardMapper.toResponse(t.getT1(), t.getT2()));
+                .map(boardMapper::toResponse);
     }
 }

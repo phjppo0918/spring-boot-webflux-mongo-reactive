@@ -1,5 +1,6 @@
 package com.example.reactivemongo.domain.board;
 
+import com.example.reactivemongo.domain.member.Member;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -16,5 +17,5 @@ public class Board {
     String id;
     String title;
     String content;
-    String writerId;
+    Member writer;
 }

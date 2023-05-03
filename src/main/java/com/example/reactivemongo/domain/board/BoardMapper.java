@@ -10,8 +10,9 @@ import org.mapstruct.MappingConstants;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface BoardMapper {
-    Board toEntity(BoardRequest dto, String writerId);
-    @Mapping(target = "id", source = "entity.id")
-    BoardResponse toResponse(Board entity, Member writer);
+    Board toEntity(BoardRequest dto, Member writer);
+    BoardResponse toResponse(Board entity);
+
+    @Mapping(target = "writerId", source = "entity.writer.id")
     BoardSummary toSummary(Board entity);
 }
