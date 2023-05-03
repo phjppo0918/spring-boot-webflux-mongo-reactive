@@ -28,8 +28,7 @@ class MemberServiceTest {
             //then
             StepVerifier.create(result)
                     .expectNextMatches(m -> m.getName().equals(dto.getName()))
-                    .expectComplete()
-                    .verify();
+                    .verifyComplete();
         }
     }
 }
