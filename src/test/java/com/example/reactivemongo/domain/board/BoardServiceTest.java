@@ -25,7 +25,7 @@ class BoardServiceTest {
 
     @Nested
     @DisplayName("create(BoardRequest) 에서")
-    class callCreate {
+    class CallCreate {
         @Test
         @DisplayName("생성을 수행하는가")
         void successCreate() {

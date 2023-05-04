@@ -17,7 +17,7 @@ class MemberServiceTest {
 
     @Nested
     @DisplayName("create(MemberRequest) 에서")
-    class callCreate {
+    class CallCreate {
         @Test
         @DisplayName("생성을 수행하는가")
         void successCreate() {
@@ -30,5 +30,11 @@ class MemberServiceTest {
                     .expectNextMatches(m -> m.getName().equals(dto.getName()))
                     .verifyComplete();
         }
+    }
+    
+    @Nested
+    @DisplayName("findAll() 에서")
+    class CallFindAll {
+        
     }
 }
