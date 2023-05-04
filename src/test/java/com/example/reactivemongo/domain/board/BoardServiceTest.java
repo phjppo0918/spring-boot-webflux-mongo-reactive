@@ -39,7 +39,7 @@ class BoardServiceTest {
                     .expectNextMatches( //expectNextMatches 체이닝해서 사용 불가
                             board ->
                                     board.getTitle().equals(dto.getTitle()) &&
-                                    board.getContent().equals(dto.getContent())
+                                            board.getContent().equals(dto.getContent())
                     )
                     // 아래로 대체해서 사용 가능
 //                    .assertNext(board -> {
