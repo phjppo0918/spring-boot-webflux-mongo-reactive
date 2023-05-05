@@ -3,15 +3,17 @@ package com.example.reactivemongo.domain.board;
 import com.example.reactivemongo.domain.auth.AuthService;
 import com.example.reactivemongo.domain.board.dto.BoardRequest;
 import com.example.reactivemongo.domain.board.dto.BoardResponse;
+import com.example.reactivemongo.domain.board.dto.BoardSummary;
 import com.example.reactivemongo.domain.member.Member;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
+
+import java.util.List;
 
 import static org.mockito.Mockito.when;
 
@@ -23,6 +25,18 @@ class BoardServiceTest {
     @MockBean
     AuthService authService;
 
+    List<BoardRequest> boards = List.of(
+            new BoardRequest("title1", "content1"),
+            new BoardRequest("title2", "content2"),
+            new BoardRequest("title3", "content3"),
+            new BoardRequest("title4", "content4")
+    );
+
+    @BeforeEach
+    public void beforeSetting() {
+        when(authService.getLoginUser()).thenReturn(Mono.just(new Member("mockUser", "passwrord")));
+    }
+
     @Nested
     @DisplayName("create(BoardRequest) 에서")
     class CallCreate {
@@ -31,7 +45,6 @@ class BoardServiceTest {
         void successCreate() {
             //given
             BoardRequest dto = new BoardRequest("title", "content");
-            when(authService.getLoginUser()).thenReturn(Mono.just(new Member("mockUser", "passwrord")));
             //when
             Mono<BoardResponse> result = boardService.create(dto);
             //then
@@ -48,6 +61,23 @@ class BoardServiceTest {
 //                    })
                     .verifyComplete()
             ;
+        }
+
+        @Nested
+        @DisplayName("findAll에서")
+        class CallFindAll {
+            @Test
+            @DisplayName("전체 조회를 수행하는가")
+            void successFindAll() throws Exception {
+                //given
+                boards.forEach(b -> boardService.create(b).subscribe());
+                //when
+                Flux<BoardSummary> result = boardService.findAll();
+                //then
+                StepVerifier.create(result)
+                        .expectNextCount(boards.size())
+                        .verifyComplete();
+            }
         }
     }
 }
