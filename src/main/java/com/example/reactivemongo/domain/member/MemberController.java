@@ -32,4 +32,9 @@ public class MemberController {
     public Mono<MemberResponse> getById(@PathVariable String id) {
         return memberService.findById(id);
     }
+
+    @PutMapping("{id}")
+    public Mono<MemberResponse> putById(@PathVariable String id, @RequestBody MemberRequest memberRequest) {
+        return memberService.update(id, memberRequest);
+    }
 }

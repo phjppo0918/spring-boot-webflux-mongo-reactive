@@ -2,6 +2,7 @@ package com.example.reactivemongo.domain.member;
 
 import com.example.reactivemongo.domain.member.dto.MemberRequest;
 import com.example.reactivemongo.domain.member.dto.MemberResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,7 @@ import reactor.test.StepVerifier;
 
 import java.util.List;
 
+@Slf4j
 @SpringBootTest
 @DisplayName("MemberService의")
 class MemberServiceTest {
@@ -47,9 +49,13 @@ class MemberServiceTest {
         @DisplayName("조회를 수행하는가")
         void successFindAll() throws Exception {
             //given
+            memberService.findAll().subscribe();
             members.forEach(m -> memberService.create(m).subscribe());
             //when
             Flux<MemberResponse> result = memberService.findAll();
+
+            log.info("{}", members.size());
+            log.info("{}", result.count().block());
             //then
             StepVerifier.create(result)
                     .expectNextCount(members.size())
@@ -75,6 +81,29 @@ class MemberServiceTest {
                                             member.getName().equals(target.getName())
                     )
                     .verifyComplete();
+        }
+    }
+
+    @Nested
+    @DisplayName("update(id, dto) 에서")
+    class CallUpdate {
+        @Test
+        @DisplayName("수정을 수행하는가")
+        void successUpdate() throws Exception {
+            //given
+            MemberRequest dto = new MemberRequest("name", "password");
+            MemberRequest updateDto = new MemberRequest("newName", "newPassword");
+            MemberResponse target = memberService.create(dto).block();
+
+            //when
+            Mono<MemberResponse> result = memberService.update(target.getId(), updateDto);
+            //then
+            StepVerifier.create(result)
+                    .expectNextMatches(member ->
+                        member.getId().equals(target.getId()) &&
+                        member.getName().equals(updateDto.getName()))
+                    .verifyComplete();
+
         }
     }
 }

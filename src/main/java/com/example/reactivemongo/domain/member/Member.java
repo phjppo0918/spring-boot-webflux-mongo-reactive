@@ -8,7 +8,7 @@ import lombok.experimental.NonFinal;
 import org.springframework.data.annotation.Id;
 
 @Getter
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @RequiredArgsConstructor
 public class Member {
     @Id
@@ -16,4 +16,14 @@ public class Member {
     String id;
     String name;
     String password;
+    public Member(String name, String password) {
+        this.name = name;
+        this.password = password;
+    }
+
+    void update(String name, String password) {
+        this.name = name;
+        this.password = password;
+    }
+
 }

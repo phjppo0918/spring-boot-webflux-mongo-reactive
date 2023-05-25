@@ -26,10 +26,17 @@ public class MemberService {
     }
 
     public Mono<MemberResponse> findById(final String id) {
-        return memberRepository.findById(id).map(memberMapper::toResponse);
+        return getEntity(id).map(memberMapper::toResponse);
     }
 
     public Mono<Member> getEntity(final String id) {
         return memberRepository.findById(id);
+    }
+
+    public Mono<MemberResponse> update(String id, MemberRequest dto) {
+        return getEntity(id).flatMap(m -> {
+            m.update(dto.getName(), dto.getPassword());
+            return memberRepository.save(m);
+        }).map(memberMapper::toResponse);
     }
 }
