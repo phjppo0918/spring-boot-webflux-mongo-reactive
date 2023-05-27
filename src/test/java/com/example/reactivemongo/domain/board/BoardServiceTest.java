@@ -25,6 +25,9 @@ class BoardServiceTest {
     @MockBean
     AuthService authService;
 
+    @Autowired
+    BoardRepository boardRepository;
+
     List<BoardRequest> boards = List.of(
             new BoardRequest("title1", "content1"),
             new BoardRequest("title2", "content2"),
@@ -35,6 +38,7 @@ class BoardServiceTest {
     @BeforeEach
     public void beforeSetting() {
         when(authService.getLoginUser()).thenReturn(Mono.just(new Member("mockUser", "passwrord")));
+        boardRepository.deleteAll().subscribe();
     }
 
     @Nested
@@ -62,22 +66,22 @@ class BoardServiceTest {
                     .verifyComplete()
             ;
         }
+    }
 
-        @Nested
-        @DisplayName("findAll에서")
-        class CallFindAll {
-            @Test
-            @DisplayName("전체 조회를 수행하는가")
-            void successFindAll() throws Exception {
-                //given
-                boards.forEach(b -> boardService.create(b).subscribe());
-                //when
-                Flux<BoardSummary> result = boardService.findAll();
-                //then
-                StepVerifier.create(result)
-                        .expectNextCount(boards.size())
-                        .verifyComplete();
-            }
+    @Nested
+    @DisplayName("findAll에서")
+    class CallFindAll {
+        @Test
+        @DisplayName("전체 조회를 수행하는가")
+        void successFindAll() throws Exception {
+            //given
+            boards.forEach(b -> boardService.create(b).subscribe());
+            //when
+            Flux<BoardSummary> result = boardService.findAll();
+            //then
+            StepVerifier.create(result)
+                    .expectNextCount(boards.size())
+                    .verifyComplete();
         }
     }
 }

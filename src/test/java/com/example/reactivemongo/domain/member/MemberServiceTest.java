@@ -3,6 +3,7 @@ package com.example.reactivemongo.domain.member;
 import com.example.reactivemongo.domain.member.dto.MemberRequest;
 import com.example.reactivemongo.domain.member.dto.MemberResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -20,10 +21,18 @@ import java.util.List;
 class MemberServiceTest {
     @Autowired
     MemberService memberService;
+
+    @Autowired
+    MemberRepository memberRepository;
     List<MemberRequest> members = List.of(
             new MemberRequest("member1", "password1"),
             new MemberRequest("member2", "password2"),
             new MemberRequest("member3", "password3"));
+
+    @BeforeEach
+    void beforeEach() {
+        memberRepository.deleteAll().subscribe();
+    }
 
     @Nested
     @DisplayName("create(MemberRequest) 에서")
@@ -48,14 +57,10 @@ class MemberServiceTest {
         @Test
         @DisplayName("조회를 수행하는가")
         void successFindAll() throws Exception {
-            //given
-            memberService.findAll().subscribe();
             members.forEach(m -> memberService.create(m).subscribe());
             //when
             Flux<MemberResponse> result = memberService.findAll();
 
-            log.info("{}", members.size());
-            log.info("{}", result.count().block());
             //then
             StepVerifier.create(result)
                     .expectNextCount(members.size())
